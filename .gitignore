@@ -1,0 +1,10 @@
+node_modules/
+dist/
+build/
+.env
+.env.*
+.superpowers/
+*.log
+tmp/
+temp/
+
