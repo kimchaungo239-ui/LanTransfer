@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'node:fs';
 import multer from 'multer';
 import path from 'node:path';
+import QRCode from 'qrcode';
 
 export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
   const router = express.Router();
@@ -19,12 +20,13 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
     })
   });
 
-  router.get('/console', (_req, res) => {
+  router.get('/console', async (_req, res) => {
     const current = session.getCurrent();
+    const phoneUrl = buildPhoneUrl(lanUrl, current.key);
     res.json({
       lanUrl,
-      phoneUrl: `${lanUrl}/phone?key=${encodeURIComponent(current.key)}`,
-      qrDataUrl,
+      phoneUrl,
+      qrDataUrl: await buildQrDataUrl(phoneUrl, qrDataUrl),
       expiresAt: current.expiresAt,
       remainingMs: current.remainingMs,
       receiveDir: fileStore.receiveDir,
@@ -32,10 +34,12 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
     });
   });
 
-  router.post('/refresh-key', (_req, res) => {
+  router.post('/refresh-key', async (_req, res) => {
     const current = session.refresh();
+    const phoneUrl = buildPhoneUrl(lanUrl, current.key);
     res.json({
-      phoneUrl: `${lanUrl}/phone?key=${encodeURIComponent(current.key)}`,
+      phoneUrl,
+      qrDataUrl: await buildQrDataUrl(phoneUrl),
       expiresAt: current.expiresAt,
       remainingMs: current.remainingMs
     });
@@ -83,6 +87,14 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
   });
 
   return router;
+}
+
+function buildPhoneUrl(lanUrl, key) {
+  return `${lanUrl}/phone?key=${encodeURIComponent(key)}`;
+}
+
+async function buildQrDataUrl(phoneUrl, fallback = '') {
+  return QRCode.toDataURL(phoneUrl, { margin: 1, width: 220 }).catch(() => fallback);
 }
 
 function requireKey(session) {

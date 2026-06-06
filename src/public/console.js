@@ -5,6 +5,7 @@ const refreshKey = document.querySelector('#refreshKey');
 const sharePath = document.querySelector('#sharePath');
 const shareFile = document.querySelector('#shareFile');
 const sharedFiles = document.querySelector('#sharedFiles');
+const qrCode = document.querySelector('#qrCode');
 
 let expiresAt = Number(document.body.dataset.expiresAt || 0);
 
@@ -20,8 +21,10 @@ refreshKey.addEventListener('click', async () => {
   const response = await fetch('/api/refresh-key', { method: 'POST' });
   const data = await response.json();
   phoneUrl.value = data.phoneUrl;
+  if (data.qrDataUrl && qrCode.tagName === 'IMG') {
+    qrCode.src = data.qrDataUrl;
+  }
   expiresAt = data.expiresAt;
-  window.location.reload();
 });
 
 shareFile.addEventListener('click', async () => {

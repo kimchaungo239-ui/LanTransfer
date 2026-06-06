@@ -1,12 +1,14 @@
 import express from 'express';
+import QRCode from 'qrcode';
 
 export function createPageRouter({ session, lanUrl, qrDataUrl }) {
   const router = express.Router();
 
-  router.get('/', (_req, res) => {
+  router.get('/', async (_req, res) => {
     const current = session.getCurrent();
     const phoneUrl = `${lanUrl}/phone?key=${encodeURIComponent(current.key)}`;
-    res.type('html').send(consolePage({ phoneUrl, qrDataUrl, expiresAt: current.expiresAt }));
+    const currentQrDataUrl = await QRCode.toDataURL(phoneUrl, { margin: 1, width: 220 }).catch(() => qrDataUrl);
+    res.type('html').send(consolePage({ phoneUrl, qrDataUrl: currentQrDataUrl, expiresAt: current.expiresAt }));
   });
 
   router.get('/phone', (req, res) => {

@@ -64,6 +64,23 @@ test('shared files can be listed and downloaded with a valid key', async () => {
   await close();
 });
 
+test('refresh creates a new phone URL and QR code', async () => {
+  const { baseUrl, close, session } = await startTestServer();
+  try {
+    const oldKey = session.getCurrent().key;
+
+    const refreshed = await fetch(`${baseUrl}/api/refresh-key`, { method: 'POST' });
+    assert.equal(refreshed.status, 200);
+    const body = await refreshed.json();
+
+    assert.equal(body.phoneUrl.includes(oldKey), false);
+    assert.equal(body.phoneUrl.includes(session.getCurrent().key), true);
+    assert.match(body.qrDataUrl, /^data:image\/png;base64,/);
+  } finally {
+    await close();
+  }
+});
+
 async function startTestServer() {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'lan-transfer-api-'));
   const receiveDir = path.join(dir, 'receive');
