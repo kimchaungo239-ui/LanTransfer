@@ -6,16 +6,17 @@ export function createFileStore({ receiveDir }) {
   const shared = new Map();
   const received = [];
   const reservedUploads = new Set();
+  let currentReceiveDir = receiveDir;
 
   async function reserveUploadPath(originalName) {
-    const parsed = path.parse(path.basename(originalName || 'file'));
+    const parsed = path.parse(normalizeUploadName(originalName));
     const base = parsed.name || 'file';
     const ext = parsed.ext || '';
     let index = 0;
 
     while (true) {
       const name = index === 0 ? `${base}${ext}` : `${base} (${index})${ext}`;
-      const fullPath = path.join(receiveDir, name);
+      const fullPath = path.join(currentReceiveDir, name);
       if (!reservedUploads.has(fullPath) && !(await exists(fullPath))) {
         reservedUploads.add(fullPath);
         return fullPath;
@@ -61,19 +62,40 @@ export function createFileStore({ receiveDir }) {
     return received.map(({ id, name, size, receivedAt }) => ({ id, name, size, receivedAt }));
   }
 
+  async function setReceiveDir(nextReceiveDir) {
+    const resolved = path.resolve(String(nextReceiveDir || '').trim());
+    await fs.mkdir(resolved, { recursive: true });
+    const stat = await fs.stat(resolved);
+    if (!stat.isDirectory()) {
+      throw new Error(`${resolved} is not a directory.`);
+    }
+    currentReceiveDir = resolved;
+    reservedUploads.clear();
+    return currentReceiveDir;
+  }
+
   function getSharedFile(id) {
     return shared.get(id) || null;
   }
 
   return {
-    receiveDir,
+    get receiveDir() {
+      return currentReceiveDir;
+    },
     reserveUploadPath,
+    setReceiveDir,
     addSharedFile,
     listSharedFiles,
     recordReceivedFile,
     listReceivedFiles,
     getSharedFile
   };
+}
+
+export function normalizeUploadName(originalName) {
+  const safeName = path.basename(originalName || 'file');
+  const repaired = Buffer.from(safeName, 'latin1').toString('utf8');
+  return repaired.includes('\uFFFD') ? safeName : repaired;
 }
 
 async function exists(filePath) {

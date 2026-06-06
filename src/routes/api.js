@@ -46,6 +46,15 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
     });
   });
 
+  router.post('/receive-dir', async (req, res) => {
+    try {
+      const receiveDir = await fileStore.setReceiveDir(req.body.receiveDir);
+      res.json({ receiveDir });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
   router.get('/status', requireKey(session), (_req, res) => {
     const current = session.getCurrent();
     res.json({

@@ -72,6 +72,29 @@ test('console file picker can add shared files without typing a path', async () 
   }
 });
 
+test('console can change receive directory for later phone uploads', async () => {
+  const { baseUrl, close, dir, session } = await startTestServer();
+  try {
+    const nextReceiveDir = path.join(dir, 'next-receive');
+    const changed = await fetch(`${baseUrl}/api/receive-dir`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ receiveDir: nextReceiveDir })
+    });
+    assert.equal(changed.status, 200);
+    assert.equal((await changed.json()).receiveDir, nextReceiveDir);
+
+    const form = new FormData();
+    form.append('files', new Blob(['new folder']), 'folder.txt');
+    const uploaded = await fetch(`${baseUrl}/api/upload?key=${session.getCurrent().key}`, { method: 'POST', body: form });
+    assert.equal(uploaded.status, 200);
+
+    assert.equal(await fs.readFile(path.join(nextReceiveDir, 'folder.txt'), 'utf8'), 'new folder');
+  } finally {
+    await close();
+  }
+});
+
 test('shared files can be listed and downloaded with a valid key', async () => {
   const { baseUrl, close, dir, fileStore, session } = await startTestServer();
   const current = session.getCurrent();

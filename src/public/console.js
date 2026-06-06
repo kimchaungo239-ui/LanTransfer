@@ -7,9 +7,13 @@ const shareFilesInput = document.querySelector('#shareFiles');
 const sharedFiles = document.querySelector('#sharedFiles');
 const receivedFiles = document.querySelector('#receivedFiles');
 const receiveDir = document.querySelector('#receiveDir');
+const receiveDirForm = document.querySelector('#receiveDirForm');
+const receiveDirInput = document.querySelector('#receiveDirInput');
+const receiveDirMessage = document.querySelector('#receiveDirMessage');
 const qrCode = document.querySelector('#qrCode');
 
 let expiresAt = Number(document.body.dataset.expiresAt || 0);
+let currentReceiveDir = '';
 
 copyUrl.addEventListener('click', async () => {
   await navigator.clipboard.writeText(phoneUrl.value);
@@ -51,10 +55,36 @@ shareForm.addEventListener('submit', async (event) => {
   renderShared(data.sharedFiles);
 });
 
+receiveDirForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const nextDir = receiveDirInput.value.trim();
+  if (!nextDir || nextDir === currentReceiveDir) return;
+
+  receiveDirMessage.textContent = 'Updating receive folder...';
+  const response = await fetch('/api/receive-dir', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ receiveDir: nextDir })
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    receiveDirMessage.textContent = data.error || 'Failed to update receive folder.';
+    return;
+  }
+  currentReceiveDir = data.receiveDir;
+  receiveDirInput.value = currentReceiveDir;
+  receiveDir.textContent = `Saved to: ${currentReceiveDir}`;
+  receiveDirMessage.textContent = 'Receive folder updated.';
+});
+
 async function loadConsole() {
   const response = await fetch('/api/console');
   const data = await response.json();
+  currentReceiveDir = data.receiveDir;
   receiveDir.textContent = `Saved to: ${data.receiveDir}`;
+  if (document.activeElement !== receiveDirInput) {
+    receiveDirInput.value = data.receiveDir;
+  }
   renderShared(data.sharedFiles);
   renderReceived(data.receivedFiles);
 }

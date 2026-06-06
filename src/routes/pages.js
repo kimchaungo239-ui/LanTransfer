@@ -30,11 +30,23 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
 </head>
 <body data-expires-at="${expiresAt}">
   <main class="shell">
-    <section class="panel console-grid">
+    <section class="hero-band">
       <div>
         <p class="eyebrow">LAN File Transfer</p>
-        <h1>Scan to transfer</h1>
-        <p class="muted">Keep your phone and this computer on the same Wi-Fi or phone hotspot.</p>
+        <h1>Local file transfer, no login required.</h1>
+        <p class="muted">Keep both devices on the same Wi-Fi or phone hotspot. Files move through this local network.</p>
+      </div>
+      <ol class="steps">
+        <li>Open this window on the computer.</li>
+        <li>Scan the QR code with your phone.</li>
+        <li>Send files in either direction.</li>
+      </ol>
+    </section>
+
+    <section class="panel console-grid">
+      <div>
+        <h2>Connect phone</h2>
+        <p class="muted">Scan the QR code or copy the URL into a phone browser.</p>
         <div class="field">
           <label>Phone URL</label>
           <input id="phoneUrl" value="${escapeHtml(phoneUrl)}" readonly>
@@ -50,19 +62,32 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
       </div>
     </section>
 
-    <section class="panel">
-      <h2>Send from computer to phone</h2>
-      <form id="shareForm" class="upload-box">
-        <input id="shareFiles" name="files" type="file" multiple>
-        <button type="submit">Add for phone download</button>
-      </form>
-      <ul id="sharedFiles" class="file-list"></ul>
+    <section class="two-column">
+      <div class="panel">
+        <h2>Send to phone</h2>
+        <p class="muted">Choose files here. They appear on the phone as download links.</p>
+        <form id="shareForm" class="upload-box">
+          <input id="shareFiles" name="files" type="file" multiple>
+          <button type="submit">Add for phone download</button>
+        </form>
+        <ul id="sharedFiles" class="file-list"></ul>
+      </div>
+
+      <div class="panel">
+        <h2>Received from phone</h2>
+        <p class="muted" id="receiveDir"></p>
+        <ul id="receivedFiles" class="file-list"></ul>
+      </div>
     </section>
 
     <section class="panel">
-      <h2>Received from phone</h2>
-      <p class="muted" id="receiveDir"></p>
-      <ul id="receivedFiles" class="file-list"></ul>
+      <h2>Receive folder</h2>
+      <p class="muted">Phone uploads are saved here. Paste a new folder path and apply it before uploading.</p>
+      <form id="receiveDirForm" class="share-row">
+        <input id="receiveDirInput" placeholder="Example: D:\\Downloads\\PhoneFiles">
+        <button type="submit">Use this folder</button>
+      </form>
+      <p id="receiveDirMessage" class="status-line"></p>
     </section>
   </main>
   <script src="/public/console.js"></script>
@@ -81,10 +106,17 @@ function phonePage({ key }) {
 </head>
 <body data-key="${escapeHtml(key)}">
   <main class="shell phone-shell">
+    <section class="hero-band phone-hero">
+      <div>
+        <p class="eyebrow">Connected</p>
+        <h1>File transfer</h1>
+        <p id="status" class="muted">Checking connection...</p>
+      </div>
+    </section>
+
     <section class="panel">
-      <p class="eyebrow">Connected</p>
-      <h1>File transfer</h1>
-      <p id="status" class="muted">Checking connection...</p>
+      <h2>Send to computer</h2>
+      <p class="muted">Selected files are saved to the computer receive folder.</p>
       <form id="uploadForm" class="upload-box">
         <input id="files" name="files" type="file" multiple>
         <button type="submit">Send to computer</button>
@@ -94,6 +126,7 @@ function phonePage({ key }) {
 
     <section class="panel">
       <h2>Files from computer</h2>
+      <p class="muted">Tap Download to save a file on this phone.</p>
       <ul id="sharedFiles" class="file-list"></ul>
     </section>
   </main>

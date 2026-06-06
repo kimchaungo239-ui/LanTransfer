@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { createFileStore } from '../src/file-store.js';
+import { createFileStore, normalizeUploadName } from '../src/file-store.js';
 
 test('reserveUploadPath preserves names without overwriting existing files', async () => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'lan-transfer-'));
@@ -30,4 +30,9 @@ test('shared files are registered by id and never expose arbitrary paths', async
   assert.equal(store.listSharedFiles().length, 1);
   assert.equal(store.getSharedFile(shared.id).path, file);
   assert.equal(store.getSharedFile('missing'), null);
+});
+
+test('normalizeUploadName repairs common utf8 filenames decoded as latin1', () => {
+  assert.equal(normalizeUploadName('æµè¯æä»¶.txt'), '测试文件.txt');
+  assert.equal(normalizeUploadName('../æµè¯.txt'), '测试.txt');
 });
