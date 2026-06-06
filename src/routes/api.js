@@ -30,7 +30,8 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
       expiresAt: current.expiresAt,
       remainingMs: current.remainingMs,
       receiveDir: fileStore.receiveDir,
-      sharedFiles: fileStore.listSharedFiles()
+      sharedFiles: fileStore.listSharedFiles(),
+      receivedFiles: fileStore.listReceivedFiles()
     });
   });
 
@@ -60,11 +61,24 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
   });
 
   router.post('/upload', requireKey(session), upload.array('files'), (req, res) => {
-    const files = (req.files || []).map((file) => ({
+    const files = (req.files || []).map((file) => fileStore.recordReceivedFile({
       name: file.filename,
+      path: file.path,
       size: file.size
     }));
     res.json({ files });
+  });
+
+  router.post('/share-upload', upload.array('files'), async (req, res) => {
+    try {
+      const files = [];
+      for (const file of req.files || []) {
+        files.push(await fileStore.addSharedFile(file.path));
+      }
+      res.json({ files, sharedFiles: fileStore.listSharedFiles() });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   });
 
   router.post('/share', async (req, res) => {

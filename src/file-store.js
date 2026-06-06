@@ -4,6 +4,7 @@ import path from 'node:path';
 
 export function createFileStore({ receiveDir }) {
   const shared = new Map();
+  const received = [];
   const reservedUploads = new Set();
 
   async function reserveUploadPath(originalName) {
@@ -44,11 +45,35 @@ export function createFileStore({ receiveDir }) {
     return [...shared.values()].map(({ id, name, size, addedAt }) => ({ id, name, size, addedAt }));
   }
 
+  function recordReceivedFile(file) {
+    const entry = {
+      id: crypto.randomUUID(),
+      name: file.name,
+      path: file.path,
+      size: file.size,
+      receivedAt: Date.now()
+    };
+    received.unshift(entry);
+    return { id: entry.id, name: entry.name, size: entry.size, receivedAt: entry.receivedAt };
+  }
+
+  function listReceivedFiles() {
+    return received.map(({ id, name, size, receivedAt }) => ({ id, name, size, receivedAt }));
+  }
+
   function getSharedFile(id) {
     return shared.get(id) || null;
   }
 
-  return { receiveDir, reserveUploadPath, addSharedFile, listSharedFiles, getSharedFile };
+  return {
+    receiveDir,
+    reserveUploadPath,
+    addSharedFile,
+    listSharedFiles,
+    recordReceivedFile,
+    listReceivedFiles,
+    getSharedFile
+  };
 }
 
 async function exists(filePath) {

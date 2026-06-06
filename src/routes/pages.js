@@ -21,7 +21,7 @@ export function createPageRouter({ session, lanUrl, qrDataUrl }) {
 
 function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,15 +33,15 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
     <section class="panel console-grid">
       <div>
         <p class="eyebrow">LAN File Transfer</p>
-        <h1>扫码传文件</h1>
-        <p class="muted">让手机和这台电脑保持在同一个 Wi-Fi 或热点下。</p>
+        <h1>Scan to transfer</h1>
+        <p class="muted">Keep your phone and this computer on the same Wi-Fi or phone hotspot.</p>
         <div class="field">
-          <label>手机访问地址</label>
+          <label>Phone URL</label>
           <input id="phoneUrl" value="${escapeHtml(phoneUrl)}" readonly>
         </div>
         <div class="actions">
-          <button id="copyUrl">复制地址</button>
-          <button id="refreshKey">刷新二维码</button>
+          <button id="copyUrl">Copy URL</button>
+          <button id="refreshKey">Refresh QR</button>
         </div>
       </div>
       <div class="qr-wrap">
@@ -51,12 +51,18 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
     </section>
 
     <section class="panel">
-      <h2>电脑发给手机</h2>
-      <div class="share-row">
-        <input id="sharePath" placeholder="粘贴要分享的本机文件完整路径">
-        <button id="shareFile">添加</button>
-      </div>
+      <h2>Send from computer to phone</h2>
+      <form id="shareForm" class="upload-box">
+        <input id="shareFiles" name="files" type="file" multiple>
+        <button type="submit">Add for phone download</button>
+      </form>
       <ul id="sharedFiles" class="file-list"></ul>
+    </section>
+
+    <section class="panel">
+      <h2>Received from phone</h2>
+      <p class="muted" id="receiveDir"></p>
+      <ul id="receivedFiles" class="file-list"></ul>
     </section>
   </main>
   <script src="/public/console.js"></script>
@@ -66,7 +72,7 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
 
 function phonePage({ key }) {
   return `<!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,17 +83,17 @@ function phonePage({ key }) {
   <main class="shell phone-shell">
     <section class="panel">
       <p class="eyebrow">Connected</p>
-      <h1>文件传输</h1>
-      <p id="status" class="muted">正在检查连接...</p>
+      <h1>File transfer</h1>
+      <p id="status" class="muted">Checking connection...</p>
       <form id="uploadForm" class="upload-box">
         <input id="files" name="files" type="file" multiple>
-        <button type="submit">发送到电脑</button>
+        <button type="submit">Send to computer</button>
       </form>
       <ul id="uploadResults" class="file-list"></ul>
     </section>
 
     <section class="panel">
-      <h2>电脑发来的文件</h2>
+      <h2>Files from computer</h2>
       <ul id="sharedFiles" class="file-list"></ul>
     </section>
   </main>

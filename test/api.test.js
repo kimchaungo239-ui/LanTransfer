@@ -25,22 +25,51 @@ test('status requires the current key', async () => {
 
 test('upload writes files only with a valid key', async () => {
   const { baseUrl, close, dir, session } = await startTestServer();
-  const current = session.getCurrent();
+  try {
+    const current = session.getCurrent();
 
-  const deniedForm = new FormData();
-  deniedForm.append('files', new Blob(['nope']), 'nope.txt');
-  const denied = await fetch(`${baseUrl}/api/upload`, { method: 'POST', body: deniedForm });
-  assert.equal(denied.status, 401);
+    const deniedForm = new FormData();
+    deniedForm.append('files', new Blob(['nope']), 'nope.txt');
+    const denied = await fetch(`${baseUrl}/api/upload`, { method: 'POST', body: deniedForm });
+    assert.equal(denied.status, 401);
 
-  const form = new FormData();
-  form.append('files', new Blob(['hello']), 'hello.txt');
-  const uploaded = await fetch(`${baseUrl}/api/upload?key=${current.key}`, { method: 'POST', body: form });
-  assert.equal(uploaded.status, 200);
+    const form = new FormData();
+    form.append('files', new Blob(['hello']), 'hello.txt');
+    const uploaded = await fetch(`${baseUrl}/api/upload?key=${current.key}`, { method: 'POST', body: form });
+    assert.equal(uploaded.status, 200);
 
-  const saved = await fs.readFile(path.join(dir, 'receive', 'hello.txt'), 'utf8');
-  assert.equal(saved, 'hello');
+    const saved = await fs.readFile(path.join(dir, 'receive', 'hello.txt'), 'utf8');
+    assert.equal(saved, 'hello');
 
-  await close();
+    const consoleState = await fetch(`${baseUrl}/api/console`);
+    const consoleBody = await consoleState.json();
+    assert.equal(consoleBody.receivedFiles[0].name, 'hello.txt');
+    assert.equal(consoleBody.receivedFiles[0].size, 5);
+  } finally {
+    await close();
+  }
+});
+
+test('console file picker can add shared files without typing a path', async () => {
+  const { baseUrl, close, session } = await startTestServer();
+  try {
+    const current = session.getCurrent();
+
+    const form = new FormData();
+    form.append('files', new Blob(['from computer']), 'picked.txt');
+    const shared = await fetch(`${baseUrl}/api/share-upload`, { method: 'POST', body: form });
+    assert.equal(shared.status, 200);
+    const body = await shared.json();
+    assert.equal(body.files[0].name, 'picked.txt');
+
+    const list = await fetch(`${baseUrl}/api/shared?key=${current.key}`);
+    assert.equal((await list.json()).files[0].name, 'picked.txt');
+
+    const download = await fetch(`${baseUrl}/api/download/${body.files[0].id}?key=${current.key}`);
+    assert.equal(await download.text(), 'from computer');
+  } finally {
+    await close();
+  }
 });
 
 test('shared files can be listed and downloaded with a valid key', async () => {

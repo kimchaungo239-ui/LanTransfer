@@ -4,17 +4,39 @@ $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $distDir = Join-Path $projectRoot "dist"
 $outputDir = "D:\Codex\output\lan-file-transfer-portable"
 $releaseDir = Join-Path $outputDir "LanTransfer-Windows"
-$exeSource = Join-Path $distDir "lan-file-transfer.exe"
+$serverBundle = Join-Path $distDir "server.cjs"
+$seaConfigPath = Join-Path $distDir "sea-config.json"
+$seaBlobPath = Join-Path $distDir "lan-transfer.blob"
 $exeTarget = Join-Path $releaseDir "LanTransfer.exe"
 $guidePath = Join-Path $releaseDir "README.txt"
 $zipPath = Join-Path $outputDir "LanTransfer-Windows.zip"
 
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
+if (Test-Path -LiteralPath $releaseDir) {
+  Remove-Item -LiteralPath $releaseDir -Recurse -Force
+}
 New-Item -ItemType Directory -Force -Path $releaseDir | Out-Null
 
-npx.cmd --yes @yao-pkg/pkg . --targets node24-win-x64 --output $exeSource
+npx.cmd --no-install esbuild src/index.js --bundle --platform=node --format=cjs --outfile=$serverBundle
 
-Copy-Item -LiteralPath $exeSource -Destination $exeTarget -Force
+@{
+  main = $serverBundle
+  output = $seaBlobPath
+  disableExperimentalSEAWarning = $true
+  useSnapshot = $false
+  useCodeCache = $false
+} | ConvertTo-Json | Set-Content -LiteralPath $seaConfigPath -Encoding UTF8
+
+node --experimental-sea-config $seaConfigPath
+
+$nodeExe = (Get-Command node.exe).Source
+Copy-Item -LiteralPath $nodeExe -Destination $exeTarget -Force
+
+npx.cmd --no-install postject $exeTarget NODE_SEA_BLOB $seaBlobPath `
+  --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 `
+  --overwrite
+
+Copy-Item -LiteralPath (Join-Path $projectRoot "src\public") -Destination (Join-Path $releaseDir "public") -Recurse -Force
 
 $guideLines = @(
   "LanTransfer Quick Start",

@@ -2,18 +2,20 @@ const countdown = document.querySelector('#countdown');
 const phoneUrl = document.querySelector('#phoneUrl');
 const copyUrl = document.querySelector('#copyUrl');
 const refreshKey = document.querySelector('#refreshKey');
-const sharePath = document.querySelector('#sharePath');
-const shareFile = document.querySelector('#shareFile');
+const shareForm = document.querySelector('#shareForm');
+const shareFilesInput = document.querySelector('#shareFiles');
 const sharedFiles = document.querySelector('#sharedFiles');
+const receivedFiles = document.querySelector('#receivedFiles');
+const receiveDir = document.querySelector('#receiveDir');
 const qrCode = document.querySelector('#qrCode');
 
 let expiresAt = Number(document.body.dataset.expiresAt || 0);
 
 copyUrl.addEventListener('click', async () => {
   await navigator.clipboard.writeText(phoneUrl.value);
-  copyUrl.textContent = '已复制';
+  copyUrl.textContent = 'Copied';
   setTimeout(() => {
-    copyUrl.textContent = '复制地址';
+    copyUrl.textContent = 'Copy URL';
   }, 1200);
 });
 
@@ -27,40 +29,53 @@ refreshKey.addEventListener('click', async () => {
   expiresAt = data.expiresAt;
 });
 
-shareFile.addEventListener('click', async () => {
-  const filePath = sharePath.value.trim();
-  if (!filePath) return;
-  const response = await fetch('/api/share', {
+shareForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  if (!shareFilesInput.files.length) return;
+
+  const form = new FormData();
+  for (const file of shareFilesInput.files) {
+    form.append('files', file);
+  }
+
+  const response = await fetch('/api/share-upload', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filePath })
+    body: form
   });
   const data = await response.json();
   if (!response.ok) {
-    alert(data.error || '添加失败');
+    alert(data.error || 'Failed to add files');
     return;
   }
-  sharePath.value = '';
-  renderShared(data.files);
+  shareFilesInput.value = '';
+  renderShared(data.sharedFiles);
 });
 
 async function loadConsole() {
   const response = await fetch('/api/console');
   const data = await response.json();
+  receiveDir.textContent = `Saved to: ${data.receiveDir}`;
   renderShared(data.sharedFiles);
+  renderReceived(data.receivedFiles);
 }
 
 function renderShared(files) {
   sharedFiles.innerHTML = files.length
     ? files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('')
-    : '<li><span>还没有添加文件</span></li>';
+    : '<li><span>No files added yet</span></li>';
+}
+
+function renderReceived(files) {
+  receivedFiles.innerHTML = files.length
+    ? files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('')
+    : '<li><span>No files received yet</span></li>';
 }
 
 function tick() {
   const remaining = Math.max(0, expiresAt - Date.now());
   countdown.textContent = remaining > 0
-    ? `二维码 ${Math.ceil(remaining / 1000)} 秒后失效`
-    : '二维码已失效，请刷新';
+    ? `QR expires in ${Math.ceil(remaining / 1000)}s`
+    : 'QR expired. Refresh it.';
 }
 
 function formatSize(size) {
@@ -82,3 +97,4 @@ function escapeHtml(value) {
 loadConsole();
 tick();
 setInterval(tick, 1000);
+setInterval(loadConsole, 2000);

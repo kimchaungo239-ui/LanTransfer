@@ -13,14 +13,14 @@ uploadForm.addEventListener('submit', async (event) => {
   }
   if (!filesInput.files.length) return;
 
-  statusEl.textContent = '正在上传...';
+  statusEl.textContent = 'Uploading...';
   const response = await fetch(`/api/upload?key=${encodeURIComponent(key)}`, { method: 'POST', body: form });
   const data = await response.json();
   if (!response.ok) {
-    statusEl.textContent = data.error || '上传失败，请重试';
+    statusEl.textContent = data.error || 'Upload failed. Try again.';
     return;
   }
-  statusEl.textContent = '上传完成';
+  statusEl.textContent = 'Upload complete';
   uploadResults.innerHTML = data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('');
   filesInput.value = '';
 });
@@ -28,11 +28,11 @@ uploadForm.addEventListener('submit', async (event) => {
 async function loadStatus() {
   const response = await fetch(`/api/status?key=${encodeURIComponent(key)}`);
   if (!response.ok) {
-    statusEl.textContent = '二维码已失效，请在电脑端刷新后重新扫码';
+    statusEl.textContent = 'QR expired. Refresh it on the computer and scan again.';
     uploadForm.hidden = true;
     return;
   }
-  statusEl.textContent = '已连接，可以开始传输';
+  statusEl.textContent = 'Connected. Ready to transfer.';
   uploadForm.hidden = false;
   await loadShared();
 }
@@ -42,8 +42,8 @@ async function loadShared() {
   if (!response.ok) return;
   const data = await response.json();
   sharedFiles.innerHTML = data.files.length
-    ? data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><a href="/api/download/${file.id}?key=${encodeURIComponent(key)}">下载</a></li>`).join('')
-    : '<li><span>电脑还没有添加文件</span></li>';
+    ? data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><a href="/api/download/${file.id}?key=${encodeURIComponent(key)}">Download</a></li>`).join('')
+    : '<li><span>No files from computer yet</span></li>';
 }
 
 function formatSize(size) {
