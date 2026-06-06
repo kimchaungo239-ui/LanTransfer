@@ -35,7 +35,29 @@ Excluded:
 - Automatic folder sharing.
 - Persistent transfer history beyond the running session.
 - Native mobile apps.
-- Full Windows desktop packaging in the first implementation plan, unless later chosen as a packaging step.
+
+## Portable Windows Release Scope
+
+The next MVP increment packages the working local service as a portable Windows release. The user should not need to copy source files, install Node.js, run `npm install`, or use developer commands on the target computer.
+
+Included:
+
+- A Windows `.exe` that launches the local transfer service.
+- A release folder under `D:\Codex\output\lan-file-transfer-portable`.
+- A `.zip` containing the `.exe` and a short Chinese usage guide.
+- Startup behavior that opens the computer console in the default browser after the server starts.
+- A default receive directory under the user's Downloads folder when no directory argument is provided.
+- Command-line support for an explicit receive directory for testing or advanced use.
+- Verification that the packaged executable starts and prints the computer console URL, phone URL, and receive folder.
+
+Excluded:
+
+- Installer UI.
+- Code signing.
+- Auto-update.
+- System tray integration.
+- Native directory picker window.
+- Public website or hosted download page.
 
 ## Architecture
 

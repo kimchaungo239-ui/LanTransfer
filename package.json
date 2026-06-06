@@ -5,13 +5,28 @@
   "description": "Local LAN file transfer MVP for browser-based phone and Windows computer transfer.",
   "type": "module",
   "main": "src/index.js",
+  "bin": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test"
+    "test": "node --test",
+    "build:win": "powershell -ExecutionPolicy Bypass -File scripts/build-portable.ps1"
   },
   "dependencies": {
     "express": "^4.19.2",
     "multer": "^2.1.1",
     "qrcode": "^1.5.4"
+  },
+  "devDependencies": {
+    "@yao-pkg/pkg": "^6.20.0",
+    "esbuild": "^0.27.7"
+  },
+  "pkg": {
+    "assets": [
+      "src/public/**/*"
+    ],
+    "targets": [
+      "node24-win-x64"
+    ],
+    "outputPath": "dist"
   }
 }
