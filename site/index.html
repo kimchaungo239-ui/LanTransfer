@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LanTransfer - Windows 与手机局域网互传文件</title>
+  <meta name="description" content="LanTransfer 是一个 Windows 与手机之间局域网互传文件的小工具，不用登录、不走云端、不插数据线。">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="LanTransfer 首页">
+      <span class="brand-mark">LT</span>
+      <span>LanTransfer</span>
+    </a>
+    <nav class="nav" aria-label="页面导航">
+      <a href="#steps">使用方法</a>
+      <a href="#security">安全说明</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Windows 便携工具</p>
+        <h1>手机和电脑传文件，不登录、不走云端、不插线。</h1>
+        <p class="lead">电脑运行 LanTransfer，手机扫码打开浏览器，就能在同一个 Wi-Fi 或热点里双向传文件。</p>
+        <div class="hero-actions">
+          <a class="download-button" href="downloads/LanTransfer-Windows.zip" download>下载 Windows 版</a>
+          <span class="release-note">便携 zip 包，解压后运行 exe</span>
+        </div>
+      </div>
+      <div class="product-shot" aria-label="LanTransfer 工具界面预览">
+        <div class="window-bar">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="preview-grid">
+          <div class="qr-preview">
+            <div class="qr-lines"></div>
+          </div>
+          <div class="preview-copy">
+            <strong>Scan to transfer</strong>
+            <span>Phone URL ready</span>
+            <span>QR expires automatically</span>
+          </div>
+        </div>
+        <div class="transfer-row">
+          <span>Received from phone</span>
+          <strong>照片_周末.jpg</strong>
+        </div>
+        <div class="transfer-row accent">
+          <span>Send to phone</span>
+          <strong>项目资料.zip</strong>
+        </div>
+      </div>
+    </section>
+
+    <section id="steps" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">三步开始</p>
+        <h2>不需要安装手机 App</h2>
+      </div>
+      <div class="steps">
+        <article>
+          <span class="step-index">1</span>
+          <h3>下载并运行</h3>
+          <p>解压 zip，双击 LanTransfer.exe。Windows 防火墙提示时允许局域网访问。</p>
+        </article>
+        <article>
+          <span class="step-index">2</span>
+          <h3>手机扫码</h3>
+          <p>让手机和电脑处在同一个 Wi-Fi 或手机热点里，然后扫描电脑页面上的二维码。</p>
+        </article>
+        <article>
+          <span class="step-index">3</span>
+          <h3>双向传输</h3>
+          <p>手机可以上传文件到电脑，电脑也可以选择文件供手机下载。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="security" class="section split">
+      <div>
+        <p class="eyebrow">本地优先</p>
+        <h2>文件只在你的局域网里流动</h2>
+      </div>
+      <div class="security-list">
+        <p><strong>无需登录：</strong>不依赖微信、网盘或账号体系。</p>
+        <p><strong>不走云端：</strong>电脑临时启动本地服务，手机通过局域网访问。</p>
+        <p><strong>二维码会失效：</strong>过期后需要在电脑端刷新二维码再连接。</p>
+        <p><strong>无需 Node 环境：</strong>Windows 版已经内置运行时，解压后可直接运行。</p>
+      </div>
+    </section>
+
+    <section id="faq" class="section faq">
+      <div class="section-heading">
+        <p class="eyebrow">FAQ</p>
+        <h2>常见问题</h2>
+      </div>
+      <details open>
+        <summary>必须在同一个网络里吗？</summary>
+        <p>是。手机和电脑需要处在同一个 Wi-Fi、路由器网络，或电脑连接手机热点。</p>
+      </details>
+      <details>
+        <summary>二维码没过期时，多个人能一起扫码上传吗？</summary>
+        <p>可以。当前版本的二维码相当于临时通行证，同网内拿到链接的人都能上传文件。</p>
+      </details>
+      <details>
+        <summary>文件大小有限制吗？</summary>
+        <p>工具当前没有主动限制单文件大小，实际取决于磁盘空间、浏览器能力和网络稳定性。</p>
+      </details>
+      <details>
+        <summary>为什么不是纯网页？</summary>
+        <p>普通网页不能直接启动电脑本地服务，也不能可靠写入指定文件夹。LanTransfer 用 Windows 工具负责本地能力，手机端仍然只需要浏览器。</p>
+      </details>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>LanTransfer</span>
+    <span>Local network file transfer for Windows and phones.</span>
+  </footer>
+</body>
+</html>

@@ -9,7 +9,8 @@
   "scripts": {
     "start": "node src/index.js",
     "test": "node --test",
-    "build:win": "powershell -ExecutionPolicy Bypass -File scripts/build-portable.ps1"
+    "build:win": "powershell -ExecutionPolicy Bypass -File scripts/build-portable.ps1",
+    "build:site": "powershell -ExecutionPolicy Bypass -File scripts/build-download-page.ps1"
   },
   "dependencies": {
     "express": "^4.19.2",
