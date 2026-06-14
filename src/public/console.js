@@ -1,3 +1,5 @@
+import { initPreferences, t } from './preferences.js';
+
 const countdown = document.querySelector('#countdown');
 const phoneUrl = document.querySelector('#phoneUrl');
 const copyUrl = document.querySelector('#copyUrl');
@@ -15,12 +17,19 @@ const qrCode = document.querySelector('#qrCode');
 
 let expiresAt = Number(document.body.dataset.expiresAt || 0);
 let currentReceiveDir = '';
+let currentSharedFiles = [];
+let currentReceivedFiles = [];
+
+initPreferences({ onLanguageChange: () => {
+  renderConsoleText();
+  tick();
+} });
 
 copyUrl.addEventListener('click', async () => {
   await navigator.clipboard.writeText(phoneUrl.value);
-  copyUrl.textContent = 'Copied';
+  copyUrl.textContent = t('console.copied');
   setTimeout(() => {
-    copyUrl.textContent = 'Copy URL';
+    copyUrl.textContent = t('console.copyUrl');
   }, 1200);
 });
 
@@ -49,7 +58,7 @@ shareForm.addEventListener('submit', async (event) => {
   });
   const data = await response.json();
   if (!response.ok) {
-    alert(data.error || 'Failed to add files');
+    alert(data.error || t('console.addFilesFailed'));
     return;
   }
   shareFilesInput.value = '';
@@ -75,17 +84,17 @@ pickReceiveDir.addEventListener('click', async () => {
 });
 
 async function updateReceiveDir(url, options) {
-  receiveDirMessage.textContent = 'Updating receive folder...';
+  receiveDirMessage.textContent = t('console.updatingFolder');
   const response = await fetch(url, options);
   const data = await response.json();
   if (!response.ok) {
-    receiveDirMessage.textContent = data.error || 'Failed to update receive folder.';
+    receiveDirMessage.textContent = data.error || t('console.folderFailed');
     return false;
   }
   currentReceiveDir = data.receiveDir;
   receiveDirInput.value = currentReceiveDir;
-  receiveDir.textContent = `Saved to: ${currentReceiveDir}`;
-  receiveDirMessage.textContent = 'Receive folder updated.';
+  receiveDir.textContent = t('console.savedTo', { path: currentReceiveDir });
+  receiveDirMessage.textContent = t('console.folderUpdated');
   return true;
 }
 
@@ -93,7 +102,7 @@ async function loadConsole() {
   const response = await fetch('/api/console');
   const data = await response.json();
   currentReceiveDir = data.receiveDir;
-  receiveDir.textContent = `Saved to: ${data.receiveDir}`;
+  receiveDir.textContent = t('console.savedTo', { path: data.receiveDir });
   if (document.activeElement !== receiveDirInput) {
     receiveDirInput.value = data.receiveDir;
   }
@@ -102,22 +111,34 @@ async function loadConsole() {
 }
 
 function renderShared(files) {
+  currentSharedFiles = files;
   sharedFiles.innerHTML = files.length
     ? files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('')
-    : '<li><span>No files added yet</span></li>';
+    : `<li><span>${escapeHtml(t('console.noShared'))}</span></li>`;
 }
 
 function renderReceived(files) {
+  currentReceivedFiles = files;
   receivedFiles.innerHTML = files.length
     ? files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('')
-    : '<li><span>No files received yet</span></li>';
+    : `<li><span>${escapeHtml(t('console.noReceived'))}</span></li>`;
 }
 
 function tick() {
   const remaining = Math.max(0, expiresAt - Date.now());
   countdown.textContent = remaining > 0
-    ? `QR expires in ${Math.ceil(remaining / 1000)}s`
-    : 'QR expired. Refresh it.';
+    ? t('console.qrExpires', { seconds: Math.ceil(remaining / 1000) })
+    : t('console.qrExpired');
+}
+
+function renderConsoleText() {
+  if (currentReceiveDir) {
+    receiveDir.textContent = t('console.savedTo', { path: currentReceiveDir });
+  }
+  copyUrl.textContent = t('console.copyUrl');
+  renderShared(currentSharedFiles);
+  renderReceived(currentReceivedFiles);
+  loadConsole();
 }
 
 function formatSize(size) {

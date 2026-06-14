@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --sand: #D4A373;
   --sand-dark: #B77F46;
   --ocean: #0891B2;
@@ -15,6 +15,21 @@
   font-family: "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
   background: var(--background);
   color: var(--ink);
+}
+
+:root[data-theme="dark"] {
+  --sand: #D4A373;
+  --sand-dark: #E2B98D;
+  --ocean: #38BDF8;
+  --forest: #86EFAC;
+  --background: #17120E;
+  --surface: #241D17;
+  --ink: #FFF7ED;
+  --muted: #D6C8B8;
+  --line: #4B3A2C;
+  --soft-sand: #3A2A1D;
+  --soft-ocean: #12313A;
+  --soft-forest: #143321;
 }
 
 * {
@@ -49,6 +64,10 @@ a {
   backdrop-filter: blur(14px);
 }
 
+:root[data-theme="dark"] .topbar {
+  background: rgba(23, 18, 14, 0.92);
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -77,6 +96,31 @@ a {
 
 .nav a:hover {
   color: var(--ocean);
+}
+
+.preferences {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preferences label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preferences select {
+  min-height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
 }
 
 .hero,
@@ -184,6 +228,10 @@ h3 {
   box-shadow: 0 24px 70px rgba(74, 59, 43, 0.14);
 }
 
+:root[data-theme="dark"] .preview-card {
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
 .preview-top {
   display: flex;
   align-items: center;
@@ -245,6 +293,12 @@ h3 {
   background: #FFFFFF;
 }
 
+:root[data-theme="dark"] .phone-frame {
+  border-color: #120E0B;
+  background: #FFFDF7;
+  color: #241D17;
+}
+
 .phone-speaker,
 .phone-line {
   height: 8px;
@@ -276,6 +330,11 @@ h3 {
   background: var(--soft-forest);
   font-weight: 800;
   font-size: 13px;
+}
+
+:root[data-theme="dark"] .phone-success {
+  color: #166534;
+  background: #EEF8F0;
 }
 
 .ocean-strip {
@@ -396,10 +455,18 @@ h3 {
     position: static;
     height: auto;
     padding: 18px 20px;
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .nav {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .preferences {
+    justify-content: flex-start;
   }
 
   .hero {

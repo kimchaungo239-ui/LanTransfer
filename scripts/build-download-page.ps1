@@ -23,6 +23,7 @@ New-Item -ItemType Directory -Force -Path $downloadDir | Out-Null
 
 Copy-Item -LiteralPath (Join-Path $siteSourceDir "index.html") -Destination $outputDir -Force
 Copy-Item -LiteralPath (Join-Path $siteSourceDir "styles.css") -Destination $outputDir -Force
+Copy-Item -LiteralPath (Join-Path $siteSourceDir "site.js") -Destination $outputDir -Force
 Copy-Item -LiteralPath $portableZip -Destination (Join-Path $downloadDir "LanTransfer-Windows.zip") -Force
 
 Write-Output "Download page: $outputDir"

@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light;
+  color-scheme: light dark;
   --sand: #D4A373;
   --sand-dark: #B77F46;
   --ocean: #0891B2;
@@ -15,6 +15,21 @@
   font-family: "Segoe UI", Arial, sans-serif;
   background: var(--background);
   color: var(--ink);
+}
+
+:root[data-theme="dark"] {
+  --sand: #D4A373;
+  --sand-dark: #E2B98D;
+  --ocean: #38BDF8;
+  --forest: #86EFAC;
+  --background: #17120E;
+  --surface: #241D17;
+  --ink: #FFF7ED;
+  --muted: #D6C8B8;
+  --line: #4B3A2C;
+  --soft-sand: #3A2A1D;
+  --soft-ocean: #12313A;
+  --soft-forest: #143321;
 }
 
 body {
@@ -48,9 +63,49 @@ body {
   margin-bottom: 16px;
 }
 
+.hero-side {
+  display: grid;
+  gap: 18px;
+}
+
+.preferences {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.preferences label {
+  display: grid;
+  gap: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.preferences select {
+  min-height: 34px;
+  border: 1px solid #DBC9B7;
+  border-radius: 6px;
+  padding: 0 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+:root[data-theme="dark"] .preferences select {
+  border-color: var(--line);
+}
+
 .app-hero {
   background:
     linear-gradient(135deg, rgba(243, 228, 209, 0.72), rgba(255, 255, 255, 0.92) 48%),
+    var(--surface);
+}
+
+:root[data-theme="dark"] .app-hero {
+  background:
+    linear-gradient(135deg, rgba(58, 42, 29, 0.82), rgba(36, 29, 23, 0.94) 48%),
     var(--surface);
 }
 
@@ -58,6 +113,12 @@ body {
   display: block;
   background:
     linear-gradient(135deg, rgba(231, 247, 250, 0.85), rgba(255, 255, 255, 0.96)),
+    var(--surface);
+}
+
+:root[data-theme="dark"] .phone-hero {
+  background:
+    linear-gradient(135deg, rgba(18, 49, 58, 0.9), rgba(36, 29, 23, 0.96)),
     var(--surface);
 }
 
@@ -132,6 +193,11 @@ input {
   font: inherit;
   background: #FFFCF6;
   color: var(--ink);
+}
+
+:root[data-theme="dark"] input {
+  border-color: var(--line);
+  background: #1E1712;
 }
 
 input:focus {
@@ -222,6 +288,10 @@ button.secondary:hover {
   border-top: 1px solid #F0E5D9;
 }
 
+:root[data-theme="dark"] .file-list li {
+  border-top-color: var(--line);
+}
+
 .file-list span:first-child {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -240,5 +310,9 @@ button.secondary:hover {
   .share-row {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .preferences {
+    justify-content: flex-start;
   }
 }

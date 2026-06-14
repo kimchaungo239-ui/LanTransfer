@@ -1,9 +1,15 @@
+import { initPreferences, t } from './preferences.js';
+
 const key = document.body.dataset.key;
 const statusEl = document.querySelector('#status');
 const uploadForm = document.querySelector('#uploadForm');
 const filesInput = document.querySelector('#files');
 const uploadResults = document.querySelector('#uploadResults');
 const sharedFiles = document.querySelector('#sharedFiles');
+
+initPreferences({ onLanguageChange: () => {
+  loadStatus();
+} });
 
 uploadForm.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -13,14 +19,14 @@ uploadForm.addEventListener('submit', async (event) => {
   }
   if (!filesInput.files.length) return;
 
-  statusEl.textContent = 'Uploading...';
+  statusEl.textContent = t('phone.uploading');
   const response = await fetch(`/api/upload?key=${encodeURIComponent(key)}`, { method: 'POST', body: form });
   const data = await response.json();
   if (!response.ok) {
-    statusEl.textContent = data.error || 'Upload failed. Try again.';
+    statusEl.textContent = data.error || t('phone.uploadFailed');
     return;
   }
-  statusEl.textContent = 'Upload complete';
+  statusEl.textContent = t('phone.uploadComplete');
   uploadResults.innerHTML = data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><span>${formatSize(file.size)}</span></li>`).join('');
   filesInput.value = '';
 });
@@ -28,11 +34,11 @@ uploadForm.addEventListener('submit', async (event) => {
 async function loadStatus() {
   const response = await fetch(`/api/status?key=${encodeURIComponent(key)}`);
   if (!response.ok) {
-    statusEl.textContent = 'QR expired. Refresh it on the computer and scan again.';
+    statusEl.textContent = t('phone.expired');
     uploadForm.hidden = true;
     return;
   }
-  statusEl.textContent = 'Connected. Ready to transfer.';
+  statusEl.textContent = t('phone.connected');
   uploadForm.hidden = false;
   await loadShared();
 }
@@ -42,8 +48,8 @@ async function loadShared() {
   if (!response.ok) return;
   const data = await response.json();
   sharedFiles.innerHTML = data.files.length
-    ? data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><a href="/api/download/${file.id}?key=${encodeURIComponent(key)}">Download</a></li>`).join('')
-    : '<li><span>No files from computer yet</span></li>';
+    ? data.files.map((file) => `<li><span>${escapeHtml(file.name)}</span><a href="/api/download/${file.id}?key=${encodeURIComponent(key)}">${escapeHtml(t('phone.download'))}</a></li>`).join('')
+    : `<li><span>${escapeHtml(t('phone.noFiles'))}</span></li>`;
 }
 
 function formatSize(size) {
