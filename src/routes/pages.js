@@ -30,14 +30,14 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
 </head>
 <body data-expires-at="${expiresAt}">
   <main class="shell">
-    <section class="hero-band">
+    <section class="hero-band app-hero">
       <div>
-        <p class="eyebrow">LAN File Transfer</p>
-        <h1>Local file transfer, no login required.</h1>
-        <p class="muted">Keep both devices on the same Wi-Fi or phone hotspot. Files move through this local network.</p>
+        <p class="eyebrow">LanTransfer</p>
+        <h1>Pass files around the room.</h1>
+        <p class="muted">Keep both devices on the same Wi-Fi or phone hotspot. Files stay on this local network.</p>
       </div>
       <ol class="steps">
-        <li>Open this window on the computer.</li>
+        <li>Keep this window open.</li>
         <li>Scan the QR code with your phone.</li>
         <li>Send files in either direction.</li>
       </ol>
@@ -46,14 +46,14 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
     <section class="panel console-grid">
       <div>
         <h2>Connect phone</h2>
-        <p class="muted">Scan the QR code or copy the URL into a phone browser.</p>
+        <p class="muted">Scan the QR code or copy the URL into a phone browser on the same network.</p>
         <div class="field">
           <label>Phone URL</label>
           <input id="phoneUrl" value="${escapeHtml(phoneUrl)}" readonly>
         </div>
         <div class="actions">
           <button id="copyUrl">Copy URL</button>
-          <button id="refreshKey">Refresh QR</button>
+          <button id="refreshKey" class="secondary">Refresh QR</button>
         </div>
       </div>
       <div class="qr-wrap">
@@ -64,7 +64,7 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
 
     <section class="two-column">
       <div class="panel">
-        <h2>Send to phone</h2>
+        <h2>Share with phone</h2>
         <p class="muted">Choose files here. They appear on the phone as download links.</p>
         <form id="shareForm" class="upload-box">
           <input id="shareFiles" name="files" type="file" multiple>
@@ -108,7 +108,7 @@ function phonePage({ key }) {
   <main class="shell phone-shell">
     <section class="hero-band phone-hero">
       <div>
-        <p class="eyebrow">Connected</p>
+        <p class="eyebrow">LanTransfer</p>
         <h1>File transfer</h1>
         <p id="status" class="muted">Checking connection...</p>
       </div>
