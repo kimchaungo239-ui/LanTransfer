@@ -10,6 +10,7 @@ const receiveDir = document.querySelector('#receiveDir');
 const receiveDirForm = document.querySelector('#receiveDirForm');
 const receiveDirInput = document.querySelector('#receiveDirInput');
 const receiveDirMessage = document.querySelector('#receiveDirMessage');
+const pickReceiveDir = document.querySelector('#pickReceiveDir');
 const qrCode = document.querySelector('#qrCode');
 
 let expiresAt = Number(document.body.dataset.expiresAt || 0);
@@ -60,22 +61,33 @@ receiveDirForm.addEventListener('submit', async (event) => {
   const nextDir = receiveDirInput.value.trim();
   if (!nextDir || nextDir === currentReceiveDir) return;
 
-  receiveDirMessage.textContent = 'Updating receive folder...';
-  const response = await fetch('/api/receive-dir', {
+  await updateReceiveDir('/api/receive-dir', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ receiveDir: nextDir })
   });
+});
+
+pickReceiveDir.addEventListener('click', async () => {
+  pickReceiveDir.disabled = true;
+  await updateReceiveDir('/api/pick-receive-dir', { method: 'POST' });
+  pickReceiveDir.disabled = false;
+});
+
+async function updateReceiveDir(url, options) {
+  receiveDirMessage.textContent = 'Updating receive folder...';
+  const response = await fetch(url, options);
   const data = await response.json();
   if (!response.ok) {
     receiveDirMessage.textContent = data.error || 'Failed to update receive folder.';
-    return;
+    return false;
   }
   currentReceiveDir = data.receiveDir;
   receiveDirInput.value = currentReceiveDir;
   receiveDir.textContent = `Saved to: ${currentReceiveDir}`;
   receiveDirMessage.textContent = 'Receive folder updated.';
-});
+  return true;
+}
 
 async function loadConsole() {
   const response = await fetch('/api/console');

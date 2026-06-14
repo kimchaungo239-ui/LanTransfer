@@ -95,6 +95,32 @@ test('console can change receive directory for later phone uploads', async () =>
   }
 });
 
+test('console can pick a receive directory through a native picker', async () => {
+  const { baseUrl, close, dir } = await startTestServer({
+    pickReceiveDir: async () => path.join(dir, 'picked-receive')
+  });
+  try {
+    const picked = await fetch(`${baseUrl}/api/pick-receive-dir`, { method: 'POST' });
+    assert.equal(picked.status, 200);
+    assert.equal((await picked.json()).receiveDir, path.join(dir, 'picked-receive'));
+  } finally {
+    await close();
+  }
+});
+
+test('native receive directory picker is only available from local console requests', async () => {
+  const { baseUrl, close, dir } = await startTestServer({
+    pickReceiveDir: async () => path.join(dir, 'picked-receive'),
+    isLocalConsoleRequest: () => false
+  });
+  try {
+    const denied = await fetch(`${baseUrl}/api/pick-receive-dir`, { method: 'POST' });
+    assert.equal(denied.status, 403);
+  } finally {
+    await close();
+  }
+});
+
 test('shared files can be listed and downloaded with a valid key', async () => {
   const { baseUrl, close, dir, fileStore, session } = await startTestServer();
   const current = session.getCurrent();
@@ -133,13 +159,19 @@ test('refresh creates a new phone URL and QR code', async () => {
   }
 });
 
-async function startTestServer() {
+async function startTestServer(options = {}) {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'lan-transfer-api-'));
   const receiveDir = path.join(dir, 'receive');
   await fs.mkdir(receiveDir);
   const session = createSessionManager({ ttlMs: 600_000 });
   const fileStore = createFileStore({ receiveDir });
-  const app = createApp({ session, fileStore, lanUrl: 'http://127.0.0.1:0' });
+  const app = createApp({
+    session,
+    fileStore,
+    lanUrl: 'http://127.0.0.1:0',
+    pickReceiveDir: options.pickReceiveDir,
+    isLocalConsoleRequest: options.isLocalConsoleRequest
+  });
   const server = http.createServer(app);
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();

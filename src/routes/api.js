@@ -1,11 +1,13 @@
 import express from 'express';
 import fs from 'node:fs';
 import multer from 'multer';
+import os from 'node:os';
 import path from 'node:path';
 import QRCode from 'qrcode';
 
-export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
+export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl, pickReceiveDir, isLocalConsoleRequest = defaultIsLocalConsoleRequest }) {
   const router = express.Router();
+  const canUseNativePicker = isLocalConsoleRequest || defaultIsLocalConsoleRequest;
 
   const upload = multer({
     storage: multer.diskStorage({
@@ -49,6 +51,24 @@ export function createApiRouter({ session, fileStore, lanUrl, qrDataUrl }) {
   router.post('/receive-dir', async (req, res) => {
     try {
       const receiveDir = await fileStore.setReceiveDir(req.body.receiveDir);
+      res.json({ receiveDir });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  router.post('/pick-receive-dir', requireLocalConsole(canUseNativePicker), async (_req, res) => {
+    if (!pickReceiveDir) {
+      res.status(501).json({ error: 'Native folder picker is not available.' });
+      return;
+    }
+    try {
+      const selectedDir = await pickReceiveDir(fileStore.receiveDir);
+      if (!selectedDir) {
+        res.status(400).json({ error: 'No folder selected.' });
+        return;
+      }
+      const receiveDir = await fileStore.setReceiveDir(selectedDir);
       res.json({ receiveDir });
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -129,4 +149,37 @@ function requireKey(session) {
     }
     next();
   };
+}
+
+function requireLocalConsole(isLocalConsoleRequest) {
+  return (req, res, next) => {
+    if (isLocalConsoleRequest(req)) {
+      next();
+      return;
+    }
+    res.status(403).json({ error: 'Native folder picker is only available from this computer.' });
+  };
+}
+
+function defaultIsLocalConsoleRequest(req) {
+  return isLocalAddress(req.socket.remoteAddress || '');
+}
+
+function isLocalAddress(address) {
+  const normalizedAddress = address.startsWith('::ffff:') ? address.slice(7) : address;
+  return address === '127.0.0.1'
+    || address === '::1'
+    || address === '::ffff:127.0.0.1'
+    || address === 'localhost'
+    || getLocalInterfaceAddresses().has(normalizedAddress);
+}
+
+function getLocalInterfaceAddresses() {
+  const addresses = new Set();
+  for (const interfaces of Object.values(os.networkInterfaces())) {
+    for (const item of interfaces || []) {
+      addresses.add(item.address);
+    }
+  }
+  return addresses;
 }

@@ -5,11 +5,11 @@ import { fileURLToPath } from 'node:url';
 import { createApiRouter } from './routes/api.js';
 import { createPageRouter } from './routes/pages.js';
 
-export function createApp({ session, fileStore, lanUrl, qrDataUrl = '' }) {
+export function createApp({ session, fileStore, lanUrl, qrDataUrl = '', pickReceiveDir = null, isLocalConsoleRequest = null }) {
   const app = express();
   app.use(express.json());
   app.use('/public', express.static(getPublicDir()));
-  app.use('/api', createApiRouter({ session, fileStore, lanUrl, qrDataUrl }));
+  app.use('/api', createApiRouter({ session, fileStore, lanUrl, qrDataUrl, pickReceiveDir, isLocalConsoleRequest }));
   app.use('/', createPageRouter({ session, lanUrl, qrDataUrl }));
   return app;
 }

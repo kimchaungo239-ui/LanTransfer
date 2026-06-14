@@ -7,6 +7,7 @@ import QRCode from 'qrcode';
 import { createApp } from './app.js';
 import { createFileStore } from './file-store.js';
 import { findAvailablePort, getPreferredLanAddress } from './network.js';
+import { createNativeFolderPicker } from './native-folder-picker.js';
 import { createSessionManager } from './session.js';
 
 async function main() {
@@ -19,7 +20,7 @@ async function main() {
   const phoneUrl = `${lanUrl}/phone?key=${encodeURIComponent(current.key)}`;
   const qrDataUrl = await QRCode.toDataURL(phoneUrl, { margin: 1, width: 220 });
   const fileStore = createFileStore({ receiveDir });
-  const app = createApp({ session, fileStore, lanUrl, qrDataUrl });
+  const app = createApp({ session, fileStore, lanUrl, qrDataUrl, pickReceiveDir: createNativeFolderPicker() });
   const server = http.createServer(app);
 
   await new Promise((resolve) => server.listen(port, '0.0.0.0', resolve));

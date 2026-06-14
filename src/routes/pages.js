@@ -82,7 +82,10 @@ function consolePage({ phoneUrl, qrDataUrl, expiresAt }) {
 
     <section class="panel">
       <h2>Receive folder</h2>
-      <p class="muted">Phone uploads are saved here. Paste a new folder path and apply it before uploading.</p>
+      <p class="muted">Phone uploads are saved here. Choose a folder or paste a path before uploading.</p>
+      <div class="actions">
+        <button id="pickReceiveDir" type="button">Choose folder</button>
+      </div>
       <form id="receiveDirForm" class="share-row">
         <input id="receiveDirInput" placeholder="Example: D:\\Downloads\\PhoneFiles">
         <button type="submit">Use this folder</button>
