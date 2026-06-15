@@ -2,6 +2,10 @@
 
 **中文** | [English](README.en.md)
 
+<p align="center">
+  <img src="docs/assets/lantransfer-icon.png" alt="LanTransfer 图标" width="128">
+</p>
+
 > 一个面向 Windows 与手机的局域网文件传输工具。不用登录，不走云端，不需要数据线。
 
 LanTransfer 会在 Windows 电脑上临时启动一个本地传输服务。手机和电脑处在同一个 Wi-Fi、局域网或手机热点下时，手机扫码即可在浏览器里上传或下载文件。

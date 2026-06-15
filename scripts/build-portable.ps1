@@ -9,6 +9,8 @@ $seaConfigPath = Join-Path $distDir "sea-config.json"
 $seaBlobPath = Join-Path $distDir "lan-transfer.blob"
 $exeTarget = Join-Path $releaseDir "LanTransfer.exe"
 $guidePath = Join-Path $releaseDir "README.txt"
+$iconSource = Join-Path $projectRoot "src\assets\lantransfer.ico"
+$iconTarget = Join-Path $releaseDir "LanTransfer.ico"
 $zipPath = Join-Path $outputDir "LanTransfer-Windows.zip"
 
 New-Item -ItemType Directory -Force -Path $distDir | Out-Null
@@ -37,6 +39,7 @@ npx.cmd --no-install postject $exeTarget NODE_SEA_BLOB $seaBlobPath `
   --overwrite
 
 Copy-Item -LiteralPath (Join-Path $projectRoot "src\public") -Destination (Join-Path $releaseDir "public") -Recurse -Force
+Copy-Item -LiteralPath $iconSource -Destination $iconTarget -Force
 
 $guideLines = @(
   "LanTransfer Quick Start",

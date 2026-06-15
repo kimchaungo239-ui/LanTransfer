@@ -97,3 +97,8 @@ D:\Codex\output\lan-transfer-download-page
 ```
 
 to a static host.
+
+## Notes
+
+- The portable zip includes `LanTransfer.ico` as the project icon asset.
+- The current Node SEA build does not yet embed that icon directly into `LanTransfer.exe`.

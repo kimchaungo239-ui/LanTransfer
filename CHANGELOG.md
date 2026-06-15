@@ -18,6 +18,7 @@ All notable changes to LanTransfer will be documented in this file.
 - Chinese and English UI.
 - Light, dark, and system theme preferences.
 - Static download page.
+- Project icon for GitHub and portable package assets.
 
 ### Security
 
@@ -27,6 +28,6 @@ All notable changes to LanTransfer will be documented in this file.
 
 ### Known limitations
 
-- The portable package currently includes `LanTransfer.exe` plus `public` assets.
+- The portable package currently includes `LanTransfer.exe`, `LanTransfer.ico`, and `public` assets.
 - No transfer resume for very large files yet.
 - No code signing yet.

@@ -2,6 +2,10 @@
 
 [中文](README.md) | **English**
 
+<p align="center">
+  <img src="docs/assets/lantransfer-icon.png" alt="LanTransfer icon" width="128">
+</p>
+
 > A local-first file transfer tool for Windows and phones. No login, no cloud relay, no cable.
 
 LanTransfer starts a temporary local web service on a Windows computer. Phones on the same Wi-Fi or hotspot scan a QR code and use their browser to upload or download files.
