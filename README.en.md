@@ -6,6 +6,8 @@
 
 LanTransfer starts a temporary local web service on a Windows computer. Phones on the same Wi-Fi or hotspot scan a QR code and use their browser to upload or download files.
 
+**Author**: Henry
+
 ![LanTransfer console](docs/assets/console-zh-light.png)
 
 ## Why

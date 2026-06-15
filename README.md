@@ -6,6 +6,8 @@
 
 LanTransfer 会在 Windows 电脑上临时启动一个本地传输服务。手机和电脑处在同一个 Wi-Fi、局域网或手机热点下时，手机扫码即可在浏览器里上传或下载文件。
 
+**作者**：Henry
+
 ![LanTransfer 控制台](docs/assets/console-zh-light.png)
 
 ## 为什么做它
