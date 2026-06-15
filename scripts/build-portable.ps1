@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $projectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $distDir = Join-Path $projectRoot "dist"
-$outputDir = "D:\Codex\output\lan-file-transfer-portable"
+$outputDir = if ($env:LANTRANSFER_PORTABLE_OUTPUT) { $env:LANTRANSFER_PORTABLE_OUTPUT } else { "D:\Codex\output\lan-file-transfer-portable" }
 $releaseDir = Join-Path $outputDir "LanTransfer-Windows"
 $serverBundle = Join-Path $distDir "server.cjs"
 $seaConfigPath = Join-Path $distDir "sea-config.json"
