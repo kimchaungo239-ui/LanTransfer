@@ -102,6 +102,18 @@ Run tests:
 npm test
 ```
 
+## Tech Stack
+
+- **Node.js 24** for the local transfer runtime.
+- **Express** for the computer console, phone pages, and transfer APIs.
+- **Multer** for browser-based file uploads.
+- **qrcode** for QR access links.
+- **HTML / CSS / Vanilla JavaScript** for the computer UI, phone UI, and download page.
+- **PowerShell + .NET Windows Forms** for the native Windows folder picker.
+- **esbuild + Node SEA + postject** for the Windows portable executable.
+- **Node.js test runner** for core behavior tests.
+- **GitHub Releases** for distributing the portable Windows package.
+
 ## Architecture
 
 ```text

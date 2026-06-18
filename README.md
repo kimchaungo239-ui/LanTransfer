@@ -102,6 +102,18 @@ npm run build:site
 npm test
 ```
 
+## 技术栈
+
+- **Node.js 24**：本地传输服务运行时。
+- **Express**：提供电脑端、手机端页面和文件传输 API。
+- **Multer**：处理浏览器上传的文件。
+- **qrcode**：生成手机扫码访问链接。
+- **HTML / CSS / Vanilla JavaScript**：实现电脑端控制台、手机端页面和下载页。
+- **PowerShell + .NET Windows Forms**：实现 Windows 原生文件夹选择器。
+- **esbuild + Node SEA + postject**：构建 Windows 便携可执行文件。
+- **Node.js test runner**：覆盖会话、上传、文件列表、语言和主题等核心逻辑。
+- **GitHub Releases**：分发 Windows 便携包。
+
 ## 架构
 
 ```text
