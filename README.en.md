@@ -3,7 +3,7 @@
 [中文](README.md) | **English**
 
 <p align="center">
-  <img src="docs/assets/lantransfer-icon.png" alt="LanTransfer icon" width="128">
+  <img src="docs/assets/lantransfer-icon-readme.png" alt="LanTransfer icon" width="128">
 </p>
 
 > A local-first file transfer tool for Windows and phones. No login, no cloud relay, no cable.
@@ -12,7 +12,7 @@ LanTransfer starts a temporary local web service on a Windows computer. Phones o
 
 **Author**: Henry
 
-![LanTransfer console](docs/assets/console-zh-light.png)
+![LanTransfer console](docs/assets/console-zh-light-readme.png)
 
 ## Why
 
@@ -31,11 +31,11 @@ Moving files between a Windows computer and a phone often means logging in to ch
 
 | Computer console | Phone page |
 | --- | --- |
-| ![Computer console](docs/assets/folder-picker-console.png) | ![Phone page](docs/assets/phone-en-dark.png) |
+| ![Computer console](docs/assets/folder-picker-console-readme.png) | ![Phone page](docs/assets/phone-en-dark-readme.png) |
 
 | Download page |
 | --- |
-| ![Download page](docs/assets/download-page-dark.png) |
+| ![Download page](docs/assets/download-page-dark-readme.png) |
 
 ## Download
 
